@@ -13,10 +13,7 @@ sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
 csv_url = "https://google.com"
 @st.cache_data
 def load_data():
-    # Wir laden die Rohdaten ohne Header und benennen die Spalten manuell
-    df = pd.read_csv(csv_url, skiprows=4, header=None)
-    # Wir geben den ersten Spalten feste Namen, egal was Google exportiert
-    df.columns = ['Check', 'Name', 'Size', 'Min', 'Max', 'Roll', 'Unit'] + list(df.columns[7:])
+    df = pd.read_csv(csv_url, skiprows=3)
     return df.dropna(subset=['Name'])
 
 try:
