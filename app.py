@@ -40,7 +40,7 @@ changes_made = False
 
 for index, row in filtered_df.iterrows():
     name = row['Name']
-    col1, col2, col3, col4 = st.columns()
+    col1, col2, col3, col4 = st.columns(4)
     
     # Standardwerte aus dem Speicher laden (falls vorhanden)
     default_check = saved_checks.get(name, False)
