@@ -22,10 +22,10 @@ def load_data():
      return df.dropna(subset=['Name'])
 
 try:
-    df = load_data()
+     df = load_data()
 except Exception as e:
-    st.error(f"Fehler beim Laden der Daten: {e}")
-    st.stop()
+     st.error(f"Fehler beim Laden der Daten: {e}")
+     st.stop()
 
 
 # Speicher initialisieren
