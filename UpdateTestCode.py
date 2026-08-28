@@ -15,7 +15,7 @@ csv_url = "https://google.com"
 def load_data():
      storage_options = {'User-Agent': 'Mozilla/5.0'}
     # header=0 sagt Pandas: Nimm die erste gefundene Zeile als Namen, aber wir überschreiben sie danach sicherheitshalber!
-    df = pd.read_csv(csv_url, skiprows=3, storage_options=storage_options)
+     df = pd.read_csv(csv_url, skiprows=3, storage_options=storage_options)
     
     # Hier reparieren wir die Spaltennamen direkt im Code, falls Google sie verschiebt:
     df.columns = df.columns.str.strip()  # Entfernt unsichtbare Leerzeichen aus dem Sheet
