@@ -18,8 +18,8 @@ def load_data():
      df = pd.read_csv(csv_url, skiprows=3, storage_options=storage_options)
     
     # Hier reparieren wir die Spaltennamen direkt im Code, falls Google sie verschiebt:
-    df.columns = df.columns.str.strip()  # Entfernt unsichtbare Leerzeichen aus dem Sheet
-    return df.dropna(subset=['Name'])
+     df.columns = df.columns.str.strip()  # Entfernt unsichtbare Leerzeichen aus dem Sheet
+     return df.dropna(subset=['Name'])
 
 try:
     df = load_data()
