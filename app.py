@@ -5,15 +5,20 @@ from streamlit_local_storage import LocalStorage
 
 st.title("⏰ Hell Clock – Relic Completionist Tool")
 
-# Verbindung zu deinem Google Sheet
-sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
-csv_url = f"https://google.com{sheet_id}/export?format=csv&gid=1242009671"
+# --- VERBINDUNG ZUM GOOGLE SHEET ---
+sheet_url = "https://docs.google.com/spreadsheets/d/1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU/edit?gid=1242009671#gid=1242009671"
 
 @st.cache_data
 def load_data():
-    return pd.read_csv(csv_url, skiprows=3)
+    conn = st.connection("gsheets", type=None)
+    return conn.read(spreadsheet=sheet_url, skiprows=3)
 
-df = load_data()
+try:
+    df = load_data()
+except Exception as e:
+    st.error(f"Fehler beim Laden der Daten: {e}")
+    st.stop()
+
 local_storage = LocalStorage()
 
 # --- DATEN AUS DEM BROWSER-SPEICHER LADEŇ ---
