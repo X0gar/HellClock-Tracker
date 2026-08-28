@@ -79,7 +79,7 @@ for index, row in filtered_df.iterrows():
 # Wenn der Spieler was geändert hat, schreiben wir es sofort zurück in den Browser
 if changes_made:
     local_storage.setItem("hell_clock_checks", saved_checks)
-    local_storage.setItem("hell_clock_rolls", saved_rolls)
+    local_storage.setItem("Hell_Clock_Rolls", saved_rolls)
 # --- SIDEBAR SOCIALS ---
 # --- SIDEBAR SOCIALS & ART ---
 st.sidebar.markdown("---")
