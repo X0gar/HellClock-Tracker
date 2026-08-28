@@ -3,6 +3,9 @@ import pandas as pd
 # Wir nutzen eine kleine Erweiterung, um auf den Speicher des Browsers zuzugreifen
 from streamlit_local_storage import LocalStorage
 import requests
+# Das MUSS auf Platz 1 stehen für das Widescreen!
+st.set_page_config(page_title="Testumgebung", layout="wide")
+st.title("⏰ Testumgebung")
 # Der neue, stabile Online-Zähler für dich
 APP_KEY = "hell_clock_tracker_xoogar_v2"
 API_URL = "https://counterapi.dev/" + APP_KEY + "/relic_tracker"
