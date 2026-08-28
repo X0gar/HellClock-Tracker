@@ -25,7 +25,7 @@ local_storage = LocalStorage()
 # --- DATEN AUS DEM BROWSER-SPEICHER LADEŇ ---
 # Wir holen uns die alten Haken und Rolls des Spielers aus seinem Browser
 saved_checks = local_storage.getItem("hell_clock_checks") or {}
-saved_rolls = local_storage.getItem("hell_clock_rolls") or {}
+saved_rolls = local_storage.getItem("Hell_Clock_Rolls") or {}
 
 # Filter in der Seitenleiste
 st.sidebar.header("Filter")
@@ -79,7 +79,7 @@ for index, row in filtered_df.iterrows():
 # Wenn der Spieler was geändert hat, schreiben wir es sofort zurück in den Browser
 if changes_made:
     local_storage.setItem("hell_clock_checks", saved_checks)
-    local_storage.setItem("hell_clock_rolls", saved_rolls)
+    local_storage.setItem("Hell_Clock_Rolls", saved_rolls)
 # --- SIDEBAR SOCIALS ---
 # --- SIDEBAR SOCIALS & ART ---
 st.sidebar.markdown("---")
