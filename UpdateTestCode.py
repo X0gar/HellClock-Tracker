@@ -109,7 +109,7 @@ try:
         # Wir erhöhen den Zähler in der Cloud um 1
         requests.post(counter_url, data=str(current_count + 1))
 except:
-    current_count = 350  # Sicherheitssystem, falls das Internet mal hakt
+    current_count = 0  # Sicherheitssystem, falls das Internet mal hakt
 
 # HIER SCHALTEN WIR DIE ANZEIGE FREI (Nur wenn ?admin=true in der URL steht)
 if st.query_params.get("admin") == "true":
