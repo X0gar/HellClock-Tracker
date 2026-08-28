@@ -3,22 +3,31 @@ import pandas as pd
 # Wir nutzen eine kleine Erweiterung, um auf den Speicher des Browsers zuzugreifen
 from streamlit_local_storage import LocalStorage
 import requests
-# --- GEHEIMER BESUCHER-ZÄHLER (DATEN HOLEN) ---
-try:
-    counter_url = "https://kvdb.io/" + "hell_clock_tracker_v2"
-    
-    current_count_resp = requests.get(counter_url)
-    if current_count_resp.status_code == 200 and current_count_resp.text.isdigit():
-        current_count = int(current_count_resp.text)
-    else:
-        current_count = 0  
-        
-    # Wir zählen standardmäßig immer hoch
-    requests.post(counter_url, data=str(current_count + 1))
-except:
-    current_count = 0
-st.title("⏰ Testumgebung")
-st.set_page_config(page_title="Testumgebung", layout="wide")
+# Der neue, stabile Online-Zähler für dich
+APP_KEY = "hell_clock_tracker_xoogar_v2"
+API_URL = "https://counterapi.dev/" + APP_KEY + "/relic_tracker"
+
+# Diese Funktion läuft im Hintergrund und zählt +1, wenn ein Gast kommt
+def increment_visitor_count():
+    # Wenn du das Passwort NICHT eingetippt hast (also ein Gast kommt), zählen wir +1
+    if st.session_state.get("dev_admin_gate") != "xoogar99":
+        try:
+            requests.get(API_URL + "/up", timeout=2)
+        except Exception:
+            pass
+
+# Funktion sofort beim Laden ausführen
+increment_visitor_count()
+
+# Funktion, um den aktuellen Stand für dich abzufragen, ohne weiter zu erhöhen
+def get_current_visits():
+    try:
+        response = requests.get(API_URL, timeout=2)
+        if response.status_code == 200:
+            return response.json().get("value", 0)
+    except Exception:
+        return "Offline"
+    return 0
 
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
