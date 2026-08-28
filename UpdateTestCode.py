@@ -89,6 +89,15 @@ for index, row in filtered_df.iterrows():
             on_change=save_roll_callback,
             args=(name, num_key)
         )
+# --- GEHEIMER BESUCHER-ZÄHLER (NUR FÜR DICH) ---
+# Der Zähler wird NUR sichtbar, wenn du in der Browser-Leiste am Ende "?admin=true" anhängst!
+if "admin" in st.query_params and st.query_params["admin"] == "true":
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("📈 Gesamte Aufrufe:")
+    # Dies ist ein universeller Test-Zähler, der ab jetzt jeden Klick zählt
+    st.sidebar.markdown(
+        "[![Besucher](https://hitwebcounter.com)](https://hitwebcounter.com)"
+    )
 # Sicherer Twitch-Button direkt zu deinem Kanal
 st.sidebar.markdown(
     """
