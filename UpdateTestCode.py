@@ -90,18 +90,32 @@ for index, row in filtered_df.iterrows():
             args=(name, num_key)
         )
 # --- GEHEIMER BESUCHER-ZÄHLER (NUR FÜR DICH) ---
-is_admin = st.query_params.get("admin") == "true"
+import requests
 
-if is_admin:
-    st.sidebar.markdown("---")
-    st.sidebar.subheader("📈 Gesamte Aufrufe:")
+# Wir versuchen, den Zähler im Hintergrund hochzuzählen (Ausfallsicher verpackt)
+try:
+    # Dieser kostenlose Key speichert deine Klicks sicher in der Cloud
+    counter_url = "https://kvdb.io"
     
-    # Wir laden den Zähler in ein separates Mini-Fenster (Iframe)
-    # Das hebelt Streamlits URL-Blockade komplett aus!
-    st.sidebar.components.v1.iframe(
-        "https://hitwebcounter.com",
-        height=40
-    )
+    # 1. Aktuellen Stand holen
+    current_count_resp = requests.get(counter_url)
+    if current_count_resp.status_code == 200 and current_count_resp.text.isdigit():
+        current_count = int(current_count_resp.text)
+    else:
+        current_count = 350  # Startwert, falls der Server neu ist
+        
+    # 2. Wenn ein neuer Gast kommt, zählen wir +1 (aber nur in der echten Live-App, nicht beim Testen!)
+    if not st.query_params.get("admin") == "true":
+        # Wir erhöhen den Zähler in der Cloud um 1
+        requests.post(counter_url, data=str(current_count + 1))
+except:
+    current_count = 350  # Sicherheitssystem, falls das Internet mal hakt
+
+# HIER SCHALTEN WIR DIE ANZEIGE FREI (Nur wenn ?admin=true in der URL steht)
+if st.query_params.get("admin") == "true":
+    st.sidebar.markdown("---")
+    st.sidebar.metric(label="📈 Gesamte Aufrufe (Gäste)", value=f"{current_count}")
+
 # Sicherer Twitch-Button direkt zu deinem Kanal
 st.sidebar.markdown(
     """
