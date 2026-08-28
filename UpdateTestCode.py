@@ -13,9 +13,12 @@ sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
 csv_url = "https://google.com"
 @st.cache_data
 def load_data():
-    # Wir fügen einen Browser-Header hinzu, damit Google den CSV-Export nicht blockiert
     storage_options = {'User-Agent': 'Mozilla/5.0'}
+    # header=0 sagt Pandas: Nimm die erste gefundene Zeile als Namen, aber wir überschreiben sie danach sicherheitshalber!
     df = pd.read_csv(csv_url, skiprows=3, storage_options=storage_options)
+    
+    # Hier reparieren wir die Spaltennamen direkt im Code, falls Google sie verschiebt:
+    df.columns = df.columns.str.strip()  # Entfernt unsichtbare Leerzeichen aus dem Sheet
     return df.dropna(subset=['Name'])
 
 try:
@@ -23,6 +26,7 @@ try:
 except Exception as e:
     st.error(f"Fehler beim Laden der Daten: {e}")
     st.stop()
+
 
 # Speicher initialisieren
 local_storage = LocalStorage()
