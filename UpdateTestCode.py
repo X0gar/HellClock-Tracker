@@ -13,7 +13,7 @@ sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
 csv_url = "https://google.com"
 @st.cache_data
 def load_data():
-    storage_options = {'User-Agent': 'Mozilla/5.0'}
+     storage_options = {'User-Agent': 'Mozilla/5.0'}
     # header=0 sagt Pandas: Nimm die erste gefundene Zeile als Namen, aber wir überschreiben sie danach sicherheitshalber!
     df = pd.read_csv(csv_url, skiprows=3, storage_options=storage_options)
     
