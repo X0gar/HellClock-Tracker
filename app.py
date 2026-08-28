@@ -6,12 +6,12 @@ from streamlit_local_storage import LocalStorage
 st.title("⏰ Hell Clock – Relic Completionist Tool")
 
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
-sheet_url = "https://docs.google.com/spreadsheets/d/1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU/edit?gid=1242009671#gid=1242009671"
+sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
+csv_url = f"https://google.com{sheet_id}/export?format=csv&gid=1242009671"
 
 @st.cache_data
 def load_data():
-    conn = st.connection("gsheets", type=None)
-    return conn.read(spreadsheet=sheet_url, skiprows=3)
+    return pd.read_csv(csv_url, skiprows=3)
 
 try:
     df = load_data()
