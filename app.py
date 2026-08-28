@@ -63,8 +63,6 @@ for index, row in filtered_df.iterrows():
     with col4:
         # Zahlenfeld mit dem geladenen Wert anzeigen
                 user_roll = st.number_input("Dein Roll:", value=default_roll, key=f"r_{name}_{index}", step=0.1, on_change=lambda: local_storage.setItem("hell_clock_rolls", {**saved_rolls, name: st.session_state[f"r_{name}_{index}"]}))
-
-    
         if checked and user_roll == row['Max']:
             st.success("🎉 MAX ROLL!")
 
