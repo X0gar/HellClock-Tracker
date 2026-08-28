@@ -5,30 +5,21 @@ from streamlit_local_storage import LocalStorage
 
 st.title("⏰ Testumgebung")
 st.set_page_config(page_title="Testumgebung", layout="wide")
-# --- GEHEIMER BESUCHER-ZÄHLER (NUR FÜR DICH) ---
+# --- GEHEIMER BESUCHER-ZÄHLER (DATEN HOLEN) ---
 import requests
+
 try:
     counter_url = "https://kvdb.io" + "hell_clock_tracker_v2"
     
-    # 1. Aktuellen Stand aus der Cloud holen
     current_count_resp = requests.get(counter_url)
     if current_count_resp.status_code == 200 and current_count_resp.text.isdigit():
         current_count = int(current_count_resp.text)
     else:
         current_count = 0  
         
-    # Wir holen uns das Passwort ganz dezent aus der Seitenleiste
-    # Normalerweise leer, für dich tippst du einfach dein geheimes Wort ein
-    st.sidebar.markdown("---")
-    admin_password = st.sidebar.text_input("🔑 Admin-Bereich:", type="password", key="dev_admin_gate")
-    
-    # Wenn das Passwort NICHT stimmt, ist es ein normaler Gast -> +1 hochzählen!
-    if admin_password != "Shelbygt500!Ginaundlisa89!":
-        requests.post(counter_url, data=str(current_count + 1))
-    else:
-        # Wenn du das richtige Passwort eingibst, ploppt die Statistik auf!
-        st.sidebar.metric(label="📈 Gesamte Aufrufe (Gäste)", value=f"{current_count}")
-except Exception as e:
+    # Wir zählen standardmäßig immer hoch
+    requests.post(counter_url, data=str(current_count + 1))
+except:
     current_count = 0
 
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
@@ -115,6 +106,13 @@ for index, row in filtered_df.iterrows():
             on_change=save_roll_callback,
             args=(name, num_key)
         )
+# --- GEHEIMER BESUCHER-ZÄHLER (ANZEIGE) ---
+# Das Passwortfeld erscheint ganz unten in der Sidebar
+admin_password = st.sidebar.text_input("🔑 Admin-Bereich:", type="password", key="dev_admin_gate")
+
+# Wenn du das richtige Passwort eingibst, ploppt die Statistik auf!
+if admin_password == "Shelbygt500!Ginaundlisa89!":
+    st.sidebar.metric(label="📈 Gesamte Aufrufe (Gäste)", value=f"{current_count}")
 
 # Sicherer Twitch-Button direkt zu deinem Kanal
 st.sidebar.markdown(
