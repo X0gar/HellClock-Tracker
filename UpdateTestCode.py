@@ -92,3 +92,9 @@ st.sidebar.markdown(
     """,
     unsafe_allow_html=True
 )
+# Das Phönix-Bild direkt darunter zentriert anzeigen
+st.sidebar.image(
+    "https://unsplash.com", 
+    caption="Team Phoenix", 
+    use_container_width=True
+)
