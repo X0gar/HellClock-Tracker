@@ -32,8 +32,19 @@ st.sidebar.header("Filter")
 sizes = df["Size"].unique()
 selected_size = st.sidebar.multiselect("Nach Relikt-Größe filtern:", sizes, default=sizes)
 filtered_df = df[df["Size"].isin(selected_size)]
+# --- DATEN AUS DEM BROWSER-SPEICHER LADEN ---
+# Wir holen uns das gesamte Speicher-Paket aus dem Browser
+saved_data = local_storage.getItem("hell_clock_data") or {}
+saved_checks = saved_data.get("checks", {})
+saved_rolls = saved_data.get("rolls", {})
 
-# --- APPMESSE & ANZEIGE ---
+# Filter in der Seitenleiste
+st.sidebar.header("Filter")
+sizes = df["Size"].unique()
+selected_size = st.sidebar.multiselect("Nach Relikt-Größe filtern:", sizes, default=sizes)
+filtered_df = df[df["Size"].isin(selected_size)]
+
+# --- ANZEIGE ---
 st.write(f"Zeige {len(filtered_df)} Relikte an:")
 
 # Listen-Änderungen überwachen
@@ -64,27 +75,24 @@ for index, row in filtered_df.iterrows():
         # Zahlenfeld mit dem geladenen Wert anzeigen
         user_roll = st.number_input(
             "Dein Roll:", 
-            value=float(st.session_state.get(f"roll_val_{name}", saved_rolls.get(name, 0.0))), 
+            value=float(st.session_state.get(f"roll_val_{name}", default_roll)), 
             key=f"r_{name}_{index}", 
             step=0.1
         )
         
-        # Sobald sich die Zahl ändert, brennen wir sie direkt in den State
-        if user_roll != float(saved_rolls.get(name, 0.0)):
+        # Sobald sich die Zahl ändert, brennen wir sie in den State
+        if user_roll != default_roll:
             st.session_state[f"roll_val_{name}"] = user_roll
             saved_rolls[name] = user_roll
-            local_storage.setItem("Hell_Clock_Rolls", saved_rolls)
+            changes_made = True  # Jetzt triggern auch Rolls den sauberen Speicher-Rutsch
 
 # --- DATEN IM BROWSER SPEICHERN ---
-# Wenn der Spieler was geändert hat, schreiben wir es sofort zurück in den Browser
+# Wenn sich Haken ODER Rolls geändert haben, schreiben wir alles als EIN Paket zurück
 if changes_made:
-    local_storage.setItem("hell_clock_checks", saved_checks)
-    local_storage.setItem("hell_clock_rolls", saved_rolls)
-# --- SIDEBAR SOCIALS ---
-# --- SIDEBAR SOCIALS & ART ---
-st.sidebar.markdown("---")
+    local_storage.setItem("hell_clock_data", {"checks": saved_checks, "rolls": saved_rolls})
 
-# Sicherer Twitch-Button direkt zu deinem Kanal
+# --- SIDEBAR SOCIALS ---
+st.sidebar.markdown("---")
 st.sidebar.markdown(
     """
     <div style="background-color: #9146FF; padding: 12px; border-radius: 8px; text-align: center; margin-top: 10px;">
