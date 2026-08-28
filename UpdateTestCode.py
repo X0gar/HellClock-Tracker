@@ -82,4 +82,4 @@ if changes_made:
     local_storage.setItem("hell_clock_rolls", saved_rolls)
 # --- SIDEBAR SOCIALS ---
 st.sidebar.markdown("---")  # Eine feine Trennlinie
-st.sidebar.markdown("🎮 **Streamer:** [@xoogar](https://www.twitch.tv/xoogar)")
+st.sidebar.markdown("🎮 **Visit me on Twitch:** [Xogar](https://www.twitch.tv/xoogar)")
