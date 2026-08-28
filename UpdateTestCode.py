@@ -6,34 +6,40 @@ import requests
 # Das MUSS auf Platz 1 stehen für das Widescreen!
 st.set_page_config(page_title="Testumgebung", layout="wide")
 st.title("⏰ Testumgebung")
-# --- GEHEIMER BESUCHER-ZÄHLER (LOKALE LOGIK) ---
+# --- GEHEIMER BESUCHER-ZÄHLER (MIT RERUN-SCHUTZ) ---
 COUNTER_FILE = "besucher_zaehler.txt"
 
-def increment_visitor_count():
-    # Wenn du NICHT als Admin eingeloggt bist, zählen wir hoch
-    if st.session_state.get("dev_admin_gate") != "xoogar99":
+# "counter_checked" sorgt dafür, dass pro Tab-Öffnung NUR EINMAL gezählt wird!
+if "counter_checked" not in st.session_state:
+    try:
         try:
-            try:
-                with open(COUNTER_FILE, "r") as f:
-                    count = int(f.read().strip())
-            except:
-                count = 0
-            
+            with open(COUNTER_FILE, "r") as f:
+                count = int(f.read().strip())
+        except:
+            count = 0
+        
+        # Nur hochzählen, wenn du NICHT der Admin bist!
+        if st.session_state.get("dev_admin_gate") != "xoogar99":
             with open(COUNTER_FILE, "w") as f:
                 f.write(str(count + 1))
-        except:
-            pass
-
-increment_visitor_count()
-
-def get_current_visits():
+            st.session_state["current_count"] = count + 1
+        else:
+            st.session_state["current_count"] = count
+    except:
+        st.session_state["current_count"] = 0
+    
+    # Schutzschild aktivieren: Für diesen Tab-Besuch wird nicht mehr gezählt!
+    st.session_state["counter_checked"] = True
+else:
+    # Bei jedem weiteren automatischen Refresh lesen wir einfach nur den aktuellen Stand aus
     try:
         with open(COUNTER_FILE, "r") as f:
-            return int(f.read().strip())
+            st.session_state["current_count"] = int(f.read().strip())
     except:
-        return 0
+        pass
 
-current_count = get_current_visits()
+# Wert für den Admin-Bereich unten bereitstellen
+current_count = st.session_state.get("current_count", 0)
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
 csv_url = "https://docs.google.com/spreadsheets/d/1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU/export?format=csv&gid=1242009671#gid=1242009671"
