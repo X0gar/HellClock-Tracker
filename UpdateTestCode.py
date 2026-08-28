@@ -95,10 +95,3 @@ st.sidebar.markdown(
     """,
     unsafe_allow_html=True
 )
-
-# Ein Phönix-Bild über eine absolut ausfallsichere Quelle (Wikimedia)
-st.sidebar.image(
-    "https://wikimedia.org", 
-    caption="Team Phoenix", 
-    use_container_width=True
-)
