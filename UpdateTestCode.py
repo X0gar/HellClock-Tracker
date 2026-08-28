@@ -8,7 +8,7 @@ st.set_page_config(page_title="Testumgebung", layout="wide")
 st.title("⏰ Testumgebung")
 # Der neue, stabile Online-Zähler für dich
 APP_KEY = "hell_clock_tracker_xoogar_v2"
-API_URL = "https://counterapi.dev/" + APP_KEY + "/relic_tracker"
+API_URL = "https://" + "api." + "counterapi.dev/" + "v1/" + APP_KEY + "/relic_tracker"
 
 # Diese Funktion läuft im Hintergrund und zählt +1, wenn ein Gast kommt
 def increment_visitor_count():
