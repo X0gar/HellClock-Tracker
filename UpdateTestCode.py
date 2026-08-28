@@ -83,5 +83,12 @@ if changes_made:
 # --- SIDEBAR SOCIALS ---
 st.sidebar.markdown("---")
 st.sidebar.markdown(
-    "[![Twitch](https://shields.io)](https://www.twitch.tv/xoogar)"
+    """
+    <div style="background-color: #9146FF; padding: 12px; border-radius: 8px; text-align: center; margin-top: 10px;">
+        <a href="https://twitch.tv" target="_blank" style="color: white; text-decoration: none; font-weight: bold; font-size: 15px; display: block;">
+            🎮 Visit me on Twitch: xoogar
+        </a>
+    </div>
+    """,
+    unsafe_allow_html=True
 )
