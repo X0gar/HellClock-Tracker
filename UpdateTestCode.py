@@ -5,6 +5,28 @@ from streamlit_local_storage import LocalStorage
 
 st.title("⏰ Testumgebung")
 st.set_page_config(page_title="Testumgebung", layout="wide")
+# --- GEHEIMER BESUCHER-ZÄHLER (NUR FÜR DICH) ---
+import requests
+
+try:
+    # HIER: Wir haben am Ende der URL einfach eine "v2" angehängt!
+    # Das ist ein brandneuer, leerer Ordner in der Cloud, der garantiert bei 0 startet.
+    counter_url = "https://kvdb.io/" + "hell_clock_tracker_v2"
+    
+    current_count_resp = requests.get(counter_url)
+    if current_count_resp.status_code == 200 and current_count_resp.text.isdigit():
+        current_count = int(current_count_resp.text)
+    else:
+        current_count = 0  
+        
+    if not st.query_params.get("admin") == "true":
+        requests.post(counter_url, data=str(current_count + 1))
+except:
+    current_count = 0  
+
+if st.query_params.get("admin") == "true":
+    st.sidebar.markdown("---")
+    st.sidebar.metric(label="📈 Gesamte Aufrufe (Gäste)", value=f"{current_count}")
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
 csv_url = "https://docs.google.com/spreadsheets/d/1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU/export?format=csv&gid=1242009671#gid=1242009671"
@@ -89,28 +111,6 @@ for index, row in filtered_df.iterrows():
             on_change=save_roll_callback,
             args=(name, num_key)
         )
-# --- GEHEIMER BESUCHER-ZÄHLER (NUR FÜR DICH) ---
-import requests
-
-try:
-    # HIER: Wir haben am Ende der URL einfach eine "v2" angehängt!
-    # Das ist ein brandneuer, leerer Ordner in der Cloud, der garantiert bei 0 startet.
-    counter_url = "https://kvdb.io/" + "hell_clock_tracker_v2"
-    
-    current_count_resp = requests.get(counter_url)
-    if current_count_resp.status_code == 200 and current_count_resp.text.isdigit():
-        current_count = int(current_count_resp.text)
-    else:
-        current_count = 0  
-        
-    if not st.query_params.get("admin") == "true":
-        requests.post(counter_url, data=str(current_count + 1))
-except:
-    current_count = 0  
-
-if st.query_params.get("admin") == "true":
-    st.sidebar.markdown("---")
-    st.sidebar.metric(label="📈 Gesamte Aufrufe (Gäste)", value=f"{current_count}")
 
 # Sicherer Twitch-Button direkt zu deinem Kanal
 st.sidebar.markdown(
