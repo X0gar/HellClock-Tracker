@@ -6,32 +6,34 @@ import requests
 # Das MUSS auf Platz 1 stehen für das Widescreen!
 st.set_page_config(page_title="Testumgebung", layout="wide")
 st.title("⏰ Testumgebung")
-# Der neue, stabile Online-Zähler für dich
-APP_KEY = "hell_clock_tracker_xoogar_v2"
-API_URL = "https://" + "api." + "counterapi.dev/" + "v1/" + APP_KEY + "/relic_tracker"
+# --- GEHEIMER BESUCHER-ZÄHLER (LOKALE LOGIK) ---
+COUNTER_FILE = "besucher_zaehler.txt"
 
-# Diese Funktion läuft im Hintergrund und zählt +1, wenn ein Gast kommt
 def increment_visitor_count():
-    # Wenn du das Passwort NICHT eingetippt hast (also ein Gast kommt), zählen wir +1
+    # Wenn du NICHT als Admin eingeloggt bist, zählen wir hoch
     if st.session_state.get("dev_admin_gate") != "xoogar99":
         try:
-            requests.get(API_URL + "/up", timeout=2)
-        except Exception:
+            try:
+                with open(COUNTER_FILE, "r") as f:
+                    count = int(f.read().strip())
+            except:
+                count = 0
+            
+            with open(COUNTER_FILE, "w") as f:
+                f.write(str(count + 1))
+        except:
             pass
 
-# Funktion sofort beim Laden ausführen
 increment_visitor_count()
 
-# Funktion, um den aktuellen Stand für dich abzufragen, ohne weiter zu erhöhen
 def get_current_visits():
     try:
-        response = requests.get(API_URL, timeout=2)
-        if response.status_code == 200:
-            return response.json().get("value", 0)
-    except Exception:
-        return "Offline"
-    return 0
+        with open(COUNTER_FILE, "r") as f:
+            return int(f.read().strip())
+    except:
+        return 0
 
+current_count = get_current_visits()
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
 csv_url = "https://docs.google.com/spreadsheets/d/1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU/export?format=csv&gid=1242009671#gid=1242009671"
