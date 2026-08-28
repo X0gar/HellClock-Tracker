@@ -11,7 +11,8 @@ csv_url = "https://docs.google.com/spreadsheets/d/1LnwXHeQUr75nDb2VmbTSOBAP1bzl7
 
 @st.cache_data
 def load_data():
-    return pd.read_csv(csv_url, skiprows=3)
+    df = pd.read_csv(csv_url, skiprows=3)
+    return df.dropna(subset=['Name'])
 
 try:
     df = load_data()
