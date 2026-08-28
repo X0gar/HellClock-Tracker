@@ -1,4 +1,4 @@
- import streamlit as st
+import streamlit as st
 import pandas as pd
 # Wir nutzen eine kleine Erweiterung, um auf den Speicher des Browsers zuzugreifen
 from streamlit_local_storage import LocalStorage
