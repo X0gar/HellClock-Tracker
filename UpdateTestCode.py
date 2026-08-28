@@ -24,7 +24,7 @@ local_storage = LocalStorage()
 
 # --- DATEN AUS DEM BROWSER-SPEICHER LADEŇ ---
 # Wir holen uns die alten Haken und Rolls des Spielers aus seinem Browser
-saved_checks = local_storage.getItem("hell_clock_checks") or {}
+saved_checks = local_storage.getItem("Hell_Clock_Checks") or {}
 saved_rolls = local_storage.getItem("Hell_Clock_Rolls") or {}
 
 # Filter in der Seitenleiste
