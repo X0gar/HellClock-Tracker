@@ -1,18 +1,20 @@
 import streamlit as st
 import pandas as pd
-# Wir nutzen eine kleine Erweiterung, um auf den Speicher des Browsers zuzugreifen
 from streamlit_local_storage import LocalStorage
 
+st.set_page_config(page_title="Hell Clock Tracker", layout="wide")
 st.title("⏰ Hell Clock – Relic Completionist Tool")
+st.markdown("---")
 
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
-sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
-csv_url = "https://docs.google.com/spreadsheets/d/1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU/export?format=csv&gid=1242009671#gid=1242009671"
+csv_url = "https://google.com"
 
 @st.cache_data
 def load_data():
     df = pd.read_csv(csv_url, skiprows=3)
-    return df.dropna(subset=['Name'])
+    # Leere Zeilen ohne Namen löschen
+    df = df.dropna(subset=[df.columns[1]])
+    return df
 
 try:
     df = load_data()
@@ -20,52 +22,93 @@ except Exception as e:
     st.error(f"Fehler beim Laden der Daten: {e}")
     st.stop()
 
+# --- LOCAL STORAGE INITIALISIERUNG ---
 local_storage = LocalStorage()
 
-# --- DATEN AUS DEM BROWSER-SPEICHER LADEŇ ---
-# Wir holen uns die alten Haken und Rolls des Spielers aus seinem Browser
 saved_checks = local_storage.getItem("hell_clock_checks") or {}
 saved_rolls = local_storage.getItem("Hell_Clock_Rolls") or {}
 
-# Filter in der Seitenleiste
-st.sidebar.header("Filter")
-sizes = df["Size"].unique()
-selected_size = st.sidebar.multiselect("Nach Relikt-Größe filtern:", sizes, default=sizes)
-filtered_df = df[df["Size"].isin(selected_size)]
+# Synchronisiere die geladenen Rolls sofort in den Streamlit Session State
+for k, v in saved_rolls.items():
+    state_key = f"state_r_{k}"
+    if state_key not in st.session_state:
+        st.session_state[state_key] = float(v) if v is not None else 0.0
 
-# --- APPMESSE & ANZEIGE ---
-st.write(f"Zeige {len(filtered_df)} Relikte an:")
+# --- SEITENLEISTE / FILTER ---
+st.sidebar.header("🛡️ Filter-Optionen")
+unique_sizes = sorted(list(df.iloc[:, 5].dropna().unique())) if df.shape[1] > 5 else []
 
-# Listen-Änderungen überwachen
-changes_made = False
+if unique_sizes:
+    selected_size = st.sidebar.selectbox("Nach Größe filtern:", ["Alle"] + unique_sizes)
+else:
+    selected_size = "Alle"
 
+# Daten filtern
+if selected_size != "Alle" and df.shape[1] > 5:
+    filtered_df = df[df.iloc[:, 5] == selected_size]
+else:
+    filtered_df = df
+
+st.markdown(f"**Zeige {len(filtered_df)} Relikte an:**")
+
+# --- LISTE ANZEIGEN ---
 for index, row in filtered_df.iterrows():
-    name = row['Name']
+    name = str(row.iloc[1])
+    min_val = row.iloc[2]
+    max_val = row.iloc[3]
+    unit = str(row.iloc[4]) if pd.notna(row.iloc[4]) else ""
+    
+    # Zustand laden
+    default_check = saved_checks.get(name, False)
+    state_key = f"state_r_{name}"
+    
+    # Sicherstellen, dass der Key im Session State existiert
+    if state_key not in st.session_state:
+        st.session_state[state_key] = float(saved_rolls.get(name, 0.0))
+
+    # Container für visuelles Highlight
+    is_checked = st.session_state.get(f"c_{name}_{index}", default_check)
+    
+    # Zeilen-Layout
     col1, col2, col3, col4 = st.columns(4)
     
-    # Standardwerte aus dem Speicher laden (falls vorhanden)
-    default_check = saved_checks.get(name, False)
-    default_roll = float(saved_rolls.get(name, 0.0))
-    
     with col1:
-        # Checkbox mit dem geladenen Wert anzeigen
         checked = st.checkbox("", value=default_check, key=f"c_{name}_{index}")
         if checked != default_check:
             saved_checks[name] = checked
-            changes_made = True
-        
+            local_storage.setItem("hell_clock_checks", saved_checks)
+            st.rerun()
+            
     with col2:
-        st.markdown(f"**{name}** ({row['Size']})")
-        
+        if checked:
+            st.markdown(f"**🔵 {name}**")
+        else:
+            st.markdown(name)
+            
     with col3:
-        st.write(f"Min: {row['Min']} / Max: {row['Max']} {row['Unit']}")
+        st.write(f"Min: {min_val} / Max: {max_val} {unit}")
         
     with col4:
-        # Zahlenfeld mit dem geladenen Wert anzeigen
-        user_roll = st.number_input("Dein Roll:", value=default_roll, key=f"r_{name}_{index}", step=0.1, on_change=lambda: local_storage.setItem("Hell_Clock_Rolls", {**saved_rolls, name: st.session_state[f"r_{name}_{index}"]}))
+        # On_Change Funktion speichert direkt und sauber ab
+        user_roll = st.number_input(
+            "Dein Roll:", 
+            min_value=0.0, 
+            max_value=10000.0, 
+            step=0.1, 
+            key=state_key
+        )
+        
+        # Prüfen ob Wert geupdatet wurde
+        current_saved_value = float(saved_rolls.get(name, 0.0))
+        if user_roll != current_saved_value:
+            saved_rolls[name] = user_roll
+            local_storage.setItem("Hell_Clock_Rolls", saved_rolls)
+            st.rerun()
 
-# --- DATEN IM BROWSER SPEICHERN ---
-# Wenn der Spieler was geändert hat, schreiben wir es sofort zurück in den Browser
-if changes_made:
-    local_storage.setItem("hell_clock_checks", saved_checks)
-    local_storage.setItem("hell_clock_rolls", saved_rolls)
+        # Max Roll Check
+        if checked and user_roll == float(max_val):
+            st.success("🎉 MAX ROLL!")
+        elif checked and user_roll < float(max_val):
+            st.error("🟥 ALARM (NOT MAX)")
+
+    st.markdown("---")
