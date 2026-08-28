@@ -7,41 +7,29 @@ st.title("⏰ Testumgebung")
 st.set_page_config(page_title="Testumgebung", layout="wide")
 # --- GEHEIMER BESUCHER-ZÄHLER (NUR FÜR DICH) ---
 import requests
-
 try:
-    # HIER: Wir haben am Ende der URL einfach eine "v2" angehängt!
-    # Das ist ein brandneuer, leerer Ordner in der Cloud, der garantiert bei 0 startet.
-    counter_url = "https://kvdb.io/" + "hell_clock_tracker_v2"
+    counter_url = "https://kvdb.io" + "hell_clock_tracker_v2"
     
+    # 1. Aktuellen Stand aus der Cloud holen
     current_count_resp = requests.get(counter_url)
     if current_count_resp.status_code == 200 and current_count_resp.text.isdigit():
         current_count = int(current_count_resp.text)
     else:
         current_count = 0  
         
-    # Wir holen uns den Admin-Wert und machen ihn absolut sicher für JEDE Streamlit-Version
-    params = st.experimental_get_query_params()
-    is_admin = False
+    # Wir holen uns das Passwort ganz dezent aus der Seitenleiste
+    # Normalerweise leer, für dich tippst du einfach dein geheimes Wort ein
+    st.sidebar.markdown("---")
+    admin_password = st.sidebar.text_input("🔑 Admin-Bereich:", type="password", key="dev_admin_gate")
     
-    if "admin" in params:
-        # Falls es eine Liste ist, nehmen wir das erste Element, ansonsten den Text selbst
-        admin_val = params["admin"][0] if isinstance(params["admin"], list) else params["admin"]
-        if admin_val == "true":
-            is_admin = True
-
-    # Wenn du NICHT der Admin bist, jagen wir den Klick hoch!
-    if not is_admin:
+    # Wenn das Passwort NICHT stimmt, ist es ein normaler Gast -> +1 hochzählen!
+    if admin_password != "Shelbygt500!Ginaundlisa89!":
         requests.post(counter_url, data=str(current_count + 1))
-except Exception as e:
-    current_count = 0  
-
-# Die Anzeige schaltet sich nur für dich als Admin frei
-if "admin" in st.experimental_get_query_params():
-    params = st.experimental_get_query_params()
-    admin_val = params["admin"][0] if isinstance(params["admin"], list) else params["admin"]
-    if admin_val == "true":
-        st.sidebar.markdown("---")
+    else:
+        # Wenn du das richtige Passwort eingibst, ploppt die Statistik auf!
         st.sidebar.metric(label="📈 Gesamte Aufrufe (Gäste)", value=f"{current_count}")
+except Exception as e:
+    current_count = 0
 
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
