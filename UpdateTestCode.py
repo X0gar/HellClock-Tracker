@@ -95,7 +95,7 @@ import requests
 try:
     # HIER: Wir haben am Ende der URL einfach eine "v2" angehängt!
     # Das ist ein brandneuer, leerer Ordner in der Cloud, der garantiert bei 0 startet.
-    counter_url = "https://kvdb.io"
+    counter_url = "https://kvdb.io/" + "hell_clock_tracker_v2"
     
     current_count_resp = requests.get(counter_url)
     if current_count_resp.status_code == 200 and current_count_resp.text.isdigit():
