@@ -2,12 +2,8 @@ import streamlit as st
 import pandas as pd
 # Wir nutzen eine kleine Erweiterung, um auf den Speicher des Browsers zuzugreifen
 from streamlit_local_storage import LocalStorage
-
-st.title("⏰ Testumgebung")
-st.set_page_config(page_title="Testumgebung", layout="wide")
-# --- GEHEIMER BESUCHER-ZÄHLER (DATEN HOLEN) ---
 import requests
-
+# --- GEHEIMER BESUCHER-ZÄHLER (DATEN HOLEN) ---
 try:
     counter_url = "https://kvdb.io/" + "hell_clock_tracker_v2"
     
@@ -21,6 +17,8 @@ try:
     requests.post(counter_url, data=str(current_count + 1))
 except:
     current_count = 0
+st.title("⏰ Testumgebung")
+st.set_page_config(page_title="Testumgebung", layout="wide")
 
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
