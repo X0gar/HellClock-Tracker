@@ -24,7 +24,7 @@ local_storage = LocalStorage()
 
 # --- DATEN AUS DEM BROWSER-SPEICHER LADEŇ ---
 # Wir holen uns die alten Haken und Rolls des Spielers aus seinem Browser
-saved_checks = local_storage.getItem("Hell_Clock_Checks") or {}
+saved_checks = local_storage.getItem("hell_clock_checks") or {}
 saved_rolls = local_storage.getItem("Hell_Clock_Rolls") or {}
 
 # Filter in der Seitenleiste
@@ -37,7 +37,19 @@ filtered_df = df[df["Size"].isin(selected_size)]
 st.write(f"Zeige {len(filtered_df)} Relikte an:")
 
 # Listen-Änderungen überwachen
-changes_made = False
+# --- SPEICHER-FUNKTIONEN FÜR STREAMLIT EVENTS ---
+def save_check_callback(relic_name, key_name):
+    # Holt den aktuellen Zustand der Checkbox direkt aus dem Session State
+    current_val = st.session_state[key_name]
+    saved_checks[relic_name] = current_val
+    local_storage.setItem("hell_clock_checks", saved_checks)
+
+def save_roll_callback(relic_name, key_name):
+    # Holt den aktuellen Wert des Nummernfelds direkt aus dem Session State
+    current_val = st.session_state[key_name]
+    st.session_state[f"roll_val_{relic_name}"] = current_val
+    saved_rolls[relic_name] = current_val
+    local_storage.setItem("Hell_Clock_Rolls", saved_rolls)
 
 # --- SCHLEIFE FÜR DIE RELIKTE ---
 for index, row in filtered_df.iterrows():
@@ -47,14 +59,19 @@ for index, row in filtered_df.iterrows():
     default_check = saved_checks.get(name, False)
     default_roll = float(saved_rolls.get(name, 0.0))
     
+    # Eindeutige Keys für den Session State generieren
+    cb_key = f"c_{name}_{index}"
+    num_key = f"r_{name}_{index}"
+    
     with col1:
-        # Checkbox anzeigen
-        checked = st.checkbox("", value=default_check, key=f"c_{name}_{index}")
-        if checked != default_check:
-            saved_checks[name] = checked
-            # HIER: Wir brennen den Haken SOFORT einzeln in den Speicher!
-            local_storage.setItem("hell_clock_checks", saved_checks)
-            st.rerun() # Zwingt Streamlit zu einem sauberen Neustart ohne Doppel-Feuer
+        # Wir nutzen on_change! Sobald geklickt wird, springt er in die obere Funktion
+        st.checkbox(
+            "", 
+            value=default_check, 
+            key=cb_key, 
+            on_change=save_check_callback, 
+            args=(name, cb_key)
+        )
         
     with col2:
         st.markdown(f"**{name}** ({row['Size']})")
@@ -63,23 +80,15 @@ for index, row in filtered_df.iterrows():
         st.write(f"Min: {row['Min']} / Max: {row['Max']} {row['Unit']}")
         
     with col4:
-        # Zahlenfeld anzeigen
-        user_roll = st.number_input(
+        # Auch hier nutzen wir on_change für die Rolls
+        st.number_input(
             "Dein Roll:", 
             value=float(st.session_state.get(f"roll_val_{name}", default_roll)), 
-            key=f"r_{name}_{index}", 
-            step=0.1
+            key=num_key, 
+            step=0.1,
+            on_change=save_roll_callback,
+            args=(name, num_key)
         )
-        
-        # Sobald sich die Zahl ändert, brennen wir sie direkt einzeln in den State und Speicher
-        if user_roll != default_roll:
-            st.session_state[f"roll_val_{name}"] = user_roll
-            saved_rolls[name] = user_roll
-            # HIER: Wir nutzen stur dein funktionierendes großes "H"!
-            local_storage.setItem("Hell_Clock_Rolls", saved_rolls)
-# --- SIDEBAR SOCIALS & ART ---
-st.sidebar.markdown("---")
-
 # Sicherer Twitch-Button direkt zu deinem Kanal
 st.sidebar.markdown(
     """
