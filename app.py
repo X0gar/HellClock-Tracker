@@ -62,12 +62,18 @@ for index, row in filtered_df.iterrows():
         
     with col4:
         # Zahlenfeld mit dem geladenen Wert anzeigen
-        user_roll = st.number_input("Dein Roll:", value=default_roll, key=f"r_{name}_{index}", step=0.1)
+        user_roll = st.number_input(
+            "Dein Roll:", 
+            value=float(st.session_state.get(f"roll_val_{name}", saved_rolls.get(name, 0.0))), 
+            key=f"r_{name}_{index}", 
+            step=0.1
+        )
         
-        if user_roll != saved_rolls.get(name, 0.0):
+        # Sobald sich die Zahl ändert, brennen wir sie direkt in den State
+        if user_roll != float(saved_rolls.get(name, 0.0)):
+            st.session_state[f"roll_val_{name}"] = user_roll
             saved_rolls[name] = user_roll
             local_storage.setItem("Hell_Clock_Rolls", saved_rolls)
-            st.rerun()
 
 # --- DATEN IM BROWSER SPEICHERN ---
 # Wenn der Spieler was geändert hat, schreiben wir es sofort zurück in den Browser
