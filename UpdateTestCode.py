@@ -3,8 +3,8 @@ import pandas as pd
 # Wir nutzen eine kleine Erweiterung, um auf den Speicher des Browsers zuzugreifen
 from streamlit_local_storage import LocalStorage
 
-st.title("⏰ Hell Clock – Relic Completionist Tool v0.1")
-st.set_page_config(page_title="Hell Clock Tracker", layout="wide")
+st.title("⏰ Testumgebung")
+st.set_page_config(page_title="Testumgebung", layout="wide")
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
 csv_url = "https://docs.google.com/spreadsheets/d/1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU/export?format=csv&gid=1242009671#gid=1242009671"
