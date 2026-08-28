@@ -90,13 +90,22 @@ for index, row in filtered_df.iterrows():
             args=(name, num_key)
         )
 # --- GEHEIMER BESUCHER-ZÄHLER (NUR FÜR DICH) ---
-# Der Zähler wird NUR sichtbar, wenn du in der Browser-Leiste am Ende "?admin=true" anhängst!
-if "admin" in st.query_params and st.query_params["admin"] == "true":
+# Holt das Admin-Passwort aus der URL (Moderne Streamlit-Variante)
+is_admin = st.query_params.get("admin") == "true"
+
+if is_admin:
     st.sidebar.markdown("---")
     st.sidebar.subheader("📈 Gesamte Aufrufe:")
-    # Dies ist ein universeller Test-Zähler, der ab jetzt jeden Klick zählt
+    # Wir binden den Zähler als sicheres HTML-Widget ein, das niemals blockiert wird
     st.sidebar.markdown(
-        "[![Besucher](https://hitwebcounter.com)](https://hitwebcounter.com)"
+        """
+        <div style="text-align: center; margin-top: 5px;">
+            <a href="https://hitwebcounter.com" target="_blank">
+                <img src="https://hitwebcounter.com" title="Counter" Alt="Visit Counter" border="0" />
+            </a>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 # Sicherer Twitch-Button direkt zu deinem Kanal
 st.sidebar.markdown(
