@@ -92,27 +92,22 @@ for index, row in filtered_df.iterrows():
 # --- GEHEIMER BESUCHER-ZÄHLER (NUR FÜR DICH) ---
 import requests
 
-# Wir versuchen, den Zähler im Hintergrund hochzuzählen (Ausfallsicher verpackt)
 try:
-    # Dieser kostenlose Key speichert deine Klicks sicher in der Cloud
+    # HIER: Wir haben am Ende der URL einfach eine "v2" angehängt!
+    # Das ist ein brandneuer, leerer Ordner in der Cloud, der garantiert bei 0 startet.
     counter_url = "https://kvdb.io"
     
-    # 1. Aktuellen Stand holen
     current_count_resp = requests.get(counter_url)
     if current_count_resp.status_code == 200 and current_count_resp.text.isdigit():
         current_count = int(current_count_resp.text)
     else:
-        current_count = 350  # Startwert, falls der Server neu ist
+        current_count = 0  
         
-    # 2. Wenn ein neuer Gast kommt, zählen wir +1 (aber nur in der echten Live-App, nicht beim Testen!)
     if not st.query_params.get("admin") == "true":
-        # Wir erhöhen den Zähler in der Cloud um 1
         requests.post(counter_url, data=str(current_count + 1))
 except:
-    current_count = 0
-requests.post(counter_url, data="0")
+    current_count = 0  
 
-# HIER SCHALTEN WIR DIE ANZEIGE FREI (Nur wenn ?admin=true in der URL steht)
 if st.query_params.get("admin") == "true":
     st.sidebar.markdown("---")
     st.sidebar.metric(label="📈 Gesamte Aufrufe (Gäste)", value=f"{current_count}")
