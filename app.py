@@ -7,7 +7,7 @@ st.title("⏰ Hell Clock – Relic Completionist Tool")
 
 # Verbindung zu deinem Google Sheet
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
-csv_url = f"https://google.com{sheet_id}/export?format=csv&gid=0"
+csv_url = f"google.com{sheet_id}/export?format=csv&gid=0"
 
 @st.cache_data
 def load_data():
