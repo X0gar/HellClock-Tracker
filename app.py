@@ -2,9 +2,44 @@ import streamlit as st
 import pandas as pd
 # Wir nutzen eine kleine Erweiterung, um auf den Speicher des Browsers zuzugreifen
 from streamlit_local_storage import LocalStorage
+import requests
+# Das MUSS auf Platz 1 stehen für das Widescreen!
+st.set_page_config(page_title="Testumgebung", layout="wide")
+st.title("⏰ Testumgebung")
+# --- GEHEIMER BESUCHER-ZÄHLER (MIT RERUN-SCHUTZ) ---
+COUNTER_FILE = "besucher_zaehler.txt"
 
-st.title("⏰ Hell Clock – Relic Completionist Tool v0.1")
-st.set_page_config(page_title="Hell Clock Tracker", layout="wide")
+# "counter_checked" sorgt dafür, dass pro Tab-Öffnung NUR EINMAL gezählt wird!
+if "counter_checked" not in st.session_state:
+    try:
+        try:
+            with open(COUNTER_FILE, "r") as f:
+                count = int(f.read().strip())
+        except:
+            count = 0
+        
+        # Nur hochzählen, wenn du NICHT der Admin bist!
+        if st.session_state.get("dev_admin_gate") != "xoogar99":
+            with open(COUNTER_FILE, "w") as f:
+                f.write(str(count + 1))
+            st.session_state["current_count"] = count + 1
+        else:
+            st.session_state["current_count"] = count
+    except:
+        st.session_state["current_count"] = 0
+    
+    # Schutzschild aktivieren: Für diesen Tab-Besuch wird nicht mehr gezählt!
+    st.session_state["counter_checked"] = True
+else:
+    # Bei jedem weiteren automatischen Refresh lesen wir einfach nur den aktuellen Stand aus
+    try:
+        with open(COUNTER_FILE, "r") as f:
+            st.session_state["current_count"] = int(f.read().strip())
+    except:
+        pass
+
+# Wert für den Admin-Bereich unten bereitstellen
+current_count = st.session_state.get("current_count", 0)
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
 csv_url = "https://docs.google.com/spreadsheets/d/1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU/export?format=csv&gid=1242009671#gid=1242009671"
@@ -89,6 +124,14 @@ for index, row in filtered_df.iterrows():
             on_change=save_roll_callback,
             args=(name, num_key)
         )
+# --- GEHEIMER BESUCHER-ZÄHLER (ANZEIGE) ---
+# Das Passwortfeld erscheint ganz unten in der Sidebar
+admin_password = st.sidebar.text_input("🔑 Admin-Bereich:", type="password", key="dev_admin_gate")
+
+# Wenn du das richtige Passwort eingibst, ploppt die Statistik auf!
+if admin_password == "Shelbygt500!Ginaundlisa89!":
+    st.sidebar.metric(label="📈 Gesamte Aufrufe (Gäste)", value=f"{current_count}")
+
 # Sicherer Twitch-Button direkt zu deinem Kanal
 st.sidebar.markdown(
     """
