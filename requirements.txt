@@ -1,2 +1,3 @@
 streamlit
 streamlit-local-storage
+st-gsheets-connection
