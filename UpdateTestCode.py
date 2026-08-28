@@ -81,7 +81,10 @@ if changes_made:
     local_storage.setItem("hell_clock_checks", saved_checks)
     local_storage.setItem("hell_clock_rolls", saved_rolls)
 # --- SIDEBAR SOCIALS ---
+# --- SIDEBAR SOCIALS & ART ---
 st.sidebar.markdown("---")
+
+# Sicherer Twitch-Button direkt zu deinem Kanal
 st.sidebar.markdown(
     """
     <div style="background-color: #9146FF; padding: 12px; border-radius: 8px; text-align: center; margin-top: 10px;">
@@ -92,9 +95,10 @@ st.sidebar.markdown(
     """,
     unsafe_allow_html=True
 )
-# Das Phönix-Bild direkt darunter zentriert anzeigen
+
+# Ein Phönix-Bild über eine absolut ausfallsichere Quelle (Wikimedia)
 st.sidebar.image(
-    "https://unsplash.com", 
+    "https://wikimedia.org", 
     caption="Team Phoenix", 
     use_container_width=True
 )
