@@ -39,20 +39,22 @@ st.write(f"Zeige {len(filtered_df)} Relikte an:")
 # Listen-Änderungen überwachen
 changes_made = False
 
+# --- SCHLEIFE FÜR DIE RELIKTE ---
 for index, row in filtered_df.iterrows():
     name = row['Name']
     col1, col2, col3, col4 = st.columns(4)
     
-    # Standardwerte aus dem Speicher laden (falls vorhanden)
     default_check = saved_checks.get(name, False)
     default_roll = float(saved_rolls.get(name, 0.0))
     
     with col1:
-        # Checkbox mit dem geladenen Wert anzeigen
+        # Checkbox anzeigen
         checked = st.checkbox("", value=default_check, key=f"c_{name}_{index}")
         if checked != default_check:
             saved_checks[name] = checked
-            changes_made = True
+            # HIER: Wir brennen den Haken SOFORT einzeln in den Speicher!
+            local_storage.setItem("hell_clock_checks", saved_checks)
+            st.rerun() # Zwingt Streamlit zu einem sauberen Neustart ohne Doppel-Feuer
         
     with col2:
         st.markdown(f"**{name}** ({row['Size']})")
@@ -61,26 +63,20 @@ for index, row in filtered_df.iterrows():
         st.write(f"Min: {row['Min']} / Max: {row['Max']} {row['Unit']}")
         
     with col4:
-        # Zahlenfeld mit dem geladenen Wert anzeigen
+        # Zahlenfeld anzeigen
         user_roll = st.number_input(
             "Dein Roll:", 
-            value=float(st.session_state.get(f"roll_val_{name}", saved_rolls.get(name, 0.0))), 
+            value=float(st.session_state.get(f"roll_val_{name}", default_roll)), 
             key=f"r_{name}_{index}", 
             step=0.1
         )
         
-        # Sobald sich die Zahl ändert, brennen wir sie direkt in den State
-        if user_roll != float(saved_rolls.get(name, 0.0)):
+        # Sobald sich die Zahl ändert, brennen wir sie direkt einzeln in den State und Speicher
+        if user_roll != default_roll:
             st.session_state[f"roll_val_{name}"] = user_roll
             saved_rolls[name] = user_roll
+            # HIER: Wir nutzen stur dein funktionierendes großes "H"!
             local_storage.setItem("Hell_Clock_Rolls", saved_rolls)
-
-# --- DATEN IM BROWSER SPEICHERN ---
-# Wenn der Spieler was geändert hat, schreiben wir es sofort zurück in den Browser
-if changes_made:
-    local_storage.setItem("hell_clock_checks", saved_checks)
-    local_storage.setItem("Hell_Clock_Rolls", saved_rolls)
-# --- SIDEBAR SOCIALS ---
 # --- SIDEBAR SOCIALS & ART ---
 st.sidebar.markdown("---")
 
