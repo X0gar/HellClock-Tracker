@@ -19,16 +19,29 @@ try:
     else:
         current_count = 0  
         
-        # Wenn NICHT das Wort "admin" in der Internetadresse steht, zählen wir +1!
-    if "admin" not in st.experimental_get_query_params():
+    # Wir holen uns den Admin-Wert und machen ihn absolut sicher für JEDE Streamlit-Version
+    params = st.experimental_get_query_params()
+    is_admin = False
+    
+    if "admin" in params:
+        # Falls es eine Liste ist, nehmen wir das erste Element, ansonsten den Text selbst
+        admin_val = params["admin"][0] if isinstance(params["admin"], list) else params["admin"]
+        if admin_val == "true":
+            is_admin = True
+
+    # Wenn du NICHT der Admin bist, jagen wir den Klick hoch!
+    if not is_admin:
         requests.post(counter_url, data=str(current_count + 1))
-except:
+except Exception as e:
     current_count = 0  
 
-# Die Anzeige schaltet sich nur frei, wenn du "?admin=true" anhängst
-if "admin" in st.experimental_get_query_params() and st.experimental_get_query_params()["admin"][0] == "true":
-    st.sidebar.markdown("---")
-    st.sidebar.metric(label="📈 Gesamte Aufrufe (Gäste)", value=f"{current_count}")
+# Die Anzeige schaltet sich nur für dich als Admin frei
+if "admin" in st.experimental_get_query_params():
+    params = st.experimental_get_query_params()
+    admin_val = params["admin"][0] if isinstance(params["admin"], list) else params["admin"]
+    if admin_val == "true":
+        st.sidebar.markdown("---")
+        st.sidebar.metric(label="📈 Gesamte Aufrufe (Gäste)", value=f"{current_count}")
 
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
