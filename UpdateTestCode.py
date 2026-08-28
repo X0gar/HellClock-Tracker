@@ -83,5 +83,5 @@ if changes_made:
 # --- SIDEBAR SOCIALS ---
 st.sidebar.markdown("---")
 st.sidebar.markdown(
-    "[![Twitch](https://shields.io)](https://twitch.tv)"
+    "[![Twitch](https://shields.io)](https://www.twitch.tv/xoogar)"
 )
