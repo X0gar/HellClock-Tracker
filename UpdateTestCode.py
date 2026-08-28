@@ -80,3 +80,6 @@ for index, row in filtered_df.iterrows():
 if changes_made:
     local_storage.setItem("hell_clock_checks", saved_checks)
     local_storage.setItem("hell_clock_rolls", saved_rolls)
+# --- SIDEBAR SOCIALS ---
+st.sidebar.markdown("---")  # Eine feine Trennlinie
+st.sidebar.markdown("🎮 **Streamer:** [@xoogar](https://twitch.tv)")
