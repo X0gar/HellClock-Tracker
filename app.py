@@ -49,7 +49,7 @@ for index, row in filtered_df.iterrows():
     
     with col1:
         # Checkbox mit dem geladenen Wert anzeigen
-        checked = st.checkbox("", value=default_check, key=f"c_{name}")
+        checked = st.checkbox("", value=default_check, key=f"c_{name}_{idx}")
         if checked != default_check:
             saved_checks[name] = checked
             changes_made = True
@@ -62,7 +62,7 @@ for index, row in filtered_df.iterrows():
         
     with col4:
         # Zahlenfeld mit dem geladenen Wert anzeigen
-        user_roll = st.number_input("Dein Roll:", value=default_roll, key=f"r_{name}", step=0.1)
+        user_roll = st.number_input("Dein Roll:", value=default_roll, key=f"r_{name}_{idx}", step=0.1)
         if user_roll != default_roll:
             saved_rolls[name] = user_roll
             changes_made = True
