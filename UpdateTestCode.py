@@ -19,14 +19,17 @@ try:
     else:
         current_count = 0  
         
-    if not st.query_params.get("admin") == "true":
+        # Wenn NICHT das Wort "admin" in der Internetadresse steht, zählen wir +1!
+    if "admin" not in st.experimental_get_query_params():
         requests.post(counter_url, data=str(current_count + 1))
 except:
     current_count = 0  
 
-if st.query_params.get("admin") == "true":
+# Die Anzeige schaltet sich nur frei, wenn du "?admin=true" anhängst
+if "admin" in st.experimental_get_query_params() and st.experimental_get_query_params()["admin"][0] == "true":
     st.sidebar.markdown("---")
     st.sidebar.metric(label="📈 Gesamte Aufrufe (Gäste)", value=f"{current_count}")
+
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
 csv_url = "https://docs.google.com/spreadsheets/d/1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU/export?format=csv&gid=1242009671#gid=1242009671"
