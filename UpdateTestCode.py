@@ -11,16 +11,12 @@ st.title("⏰ Hell Clock – Relic Completionist Tool v0.1")
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
 csv_url = "https://google.com"
-
 @st.cache_data
 def load_data():
-    df = pd.read_csv(csv_url, skiprows=3)
+    # on_bad_lines='skip' sorgt dafür, dass fehlerhafte CSV-Zeilen ignoriert werden, statt die App zu crashen!
+    df = pd.read_csv(csv_url, skiprows=3, on_bad_lines='skip')
     return df.dropna(subset=['Name'])
 
-try:
-    df = load_data()
-except Exception as e:
-    st.error(f"Fehler beim Laden der Daten: {e}")
     st.stop()
 
 # Speicher initialisieren
