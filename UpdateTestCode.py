@@ -6,10 +6,13 @@ import requests
 # Das MUSS auf Platz 1 stehen für das Widescreen!
 st.set_page_config(page_title="Testumgebung", layout="wide")
 st.title("⏰ Testumgebung")
-# --- GEHEIMER BESUCHER-ZÄHLER (MIT RERUN-SCHUTZ) ---
+# --- GEHEIMER BESUCHER-ZÄHLER (NUR MIT URL-SCHUTZ) ---
 COUNTER_FILE = "besucher_zaehler.txt"
 
-# "counter_checked" sorgt dafür, dass pro Tab-Öffnung NUR EINMAL gezählt wird!
+# Wir holen uns die URL-Parameter direkt beim Start
+url_params = st.experimental_get_query_params()
+is_url_admin = "admin" in url_params and "true" in url_params["admin"]
+
 if "counter_checked" not in st.session_state:
     try:
         try:
@@ -18,8 +21,8 @@ if "counter_checked" not in st.session_state:
         except:
             count = 0
         
-        # Nur hochzählen, wenn du NICHT der Admin bist!
-        if st.session_state.get("dev_admin_gate") != "xoogar99":
+        # Wenn du mit "?admin=true" kommst, blockieren wir das Hochzählen sofort!
+        if not is_url_admin:
             with open(COUNTER_FILE, "w") as f:
                 f.write(str(count + 1))
             st.session_state["current_count"] = count + 1
@@ -28,17 +31,14 @@ if "counter_checked" not in st.session_state:
     except:
         st.session_state["current_count"] = 0
     
-    # Schutzschild aktivieren: Für diesen Tab-Besuch wird nicht mehr gezählt!
     st.session_state["counter_checked"] = True
 else:
-    # Bei jedem weiteren automatischen Refresh lesen wir einfach nur den aktuellen Stand aus
     try:
         with open(COUNTER_FILE, "r") as f:
             st.session_state["current_count"] = int(f.read().strip())
     except:
         pass
 
-# Wert für den Admin-Bereich unten bereitstellen
 current_count = st.session_state.get("current_count", 0)
 # --- VERBINDUNG ZUM GOOGLE SHEET ---
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
