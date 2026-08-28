@@ -9,7 +9,7 @@ st.set_page_config(page_title="Testumgebung", layout="wide")
 import requests
 
 try:
-    counter_url = "https://kvdb.io" + "hell_clock_tracker_v2"
+    counter_url = "https://kvdb.io/" + "hell_clock_tracker_v2"
     
     current_count_resp = requests.get(counter_url)
     if current_count_resp.status_code == 200 and current_count_resp.text.isdigit():
