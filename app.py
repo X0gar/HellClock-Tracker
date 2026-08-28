@@ -80,3 +80,18 @@ for index, row in filtered_df.iterrows():
 if changes_made:
     local_storage.setItem("hell_clock_checks", saved_checks)
     local_storage.setItem("hell_clock_rolls", saved_rolls)
+# --- SIDEBAR SOCIALS ---
+# --- SIDEBAR SOCIALS & ART ---
+st.sidebar.markdown("---")
+
+# Sicherer Twitch-Button direkt zu deinem Kanal
+st.sidebar.markdown(
+    """
+    <div style="background-color: #9146FF; padding: 12px; border-radius: 8px; text-align: center; margin-top: 10px;">
+        <a href="https://www.twitch.tv/xoogar" target="_blank" style="color: white; text-decoration: none; font-weight: bold; font-size: 15px; display: block;">
+            🎮 Visit me on Twitch: xoogar
+        </a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
