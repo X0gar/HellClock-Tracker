@@ -4,8 +4,8 @@ import pandas as pd
 from streamlit_local_storage import LocalStorage
 import requests
 # Das MUSS auf Platz 1 stehen für das Widescreen!
-st.set_page_config(page_title="Testumgebung", layout="wide")
-st.title("⏰ Testumgebung")
+st.set_page_config(page_title="HellClock Relic Tracker", layout="wide")
+st.title("⏰ Relic Tracker")
 # --- GEHEIMER BESUCHER-ZÄHLER (MIT RERUN-SCHUTZ) ---
 COUNTER_FILE = "besucher_zaehler.txt"
 
