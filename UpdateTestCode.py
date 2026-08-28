@@ -12,7 +12,6 @@ st.title("⏰ Hell Clock – Relic Completionist Tool v0.1")
 sheet_id = "1LnwXHeQUr75nDb2VmbTSOBAP1bzl7x7Qul-PGvdHyLU"
 csv_url = "https://google.com"
 @st.cache_data
-@st.cache_data
 def load_data():
     # Wir fügen einen Browser-Header hinzu, damit Google den CSV-Export nicht blockiert
     storage_options = {'User-Agent': 'Mozilla/5.0'}
