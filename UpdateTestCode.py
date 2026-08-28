@@ -84,3 +84,4 @@ if changes_made:
 st.sidebar.markdown("---")
 st.sidebar.markdown(
     "[![Twitch](https://shields.io)](https://twitch.tv)"
+)
